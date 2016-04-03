@@ -1,0 +1,93 @@
+<html ng-app='app'>
+  <head>
+    <script src="./bower_components/angular/angular.js"></script>
+    <script src="./bower_components/angular-animate/angular-animate.js"></script>
+	<script>
+		angular.module('app', ['ngAnimate'])
+			.controller('TestController', function($scope){
+				$scope.data = [{name: 'joe'},{name: 'bob'}, {name: 'mike'}, {name: 'jan'}, {name: 'josh'}];
+				var data = $scope.data;
+				doSort();
+				
+				$scope.doClick = function doClick(item){
+					removeItem(item);
+				}
+				
+				$scope.createNew = function createNew(){
+					data.push({name: $scope.newName});
+					doSort();
+					$scope.newName = "";
+				}
+				
+				function removeItem(item) {
+					var index = data.indexOf(item);
+					data.splice(index, 1);
+					console.log('Count: '+$scope.data.length);
+				}
+				
+				function doSort() {
+					$scope.data.sort(function (a, b) {
+						return a.name.localeCompare(b.name);
+					});
+				}
+			})
+	</script>
+	<style>
+		.square2 {
+		  background: #2b3f53;
+		  border-radius: 3px;
+		  width: 100px;
+		  transform-origin: 0% 50%;
+		  padding: 5px;
+		  color: white;
+		}
+		
+		.fade.ng-enter {
+		  animation: showNow 1s;
+		  animation-fill-mode: forwards;
+		}
+		
+		.fade.ng-leave {
+		  animation: goAway 1s;
+		  animation-fill-mode: forwards;
+		  animation-timing-function: linear;
+		}
+		
+		.contents {
+			overflow:hidden;
+		}
+		
+		@keyframes goAway {
+			100% {
+				transform: scale(1, 0);
+				padding-top: 0px;
+				padding-bottom: 0px;
+				height: 0px;
+				opacity: 0;
+			}
+		}
+		
+		@keyframes showNow {
+			0% {
+				transform: scale(1, 0);
+			}
+			100% {
+				transform: scale(1, 1);
+				opacity: 1;
+			}
+		}
+		
+
+	</style>
+    <title></title>
+  </head>
+  <body ng-controller="TestController">
+	<input type='text' ng-model='newName'/><button ng-click="createNew()">Create</button>
+		<div class="square2 fade contents" ng-repeat='elem in data' ng-click='doClick(elem)' maxq-anim-track>
+			<div>
+				<span>{{elem.name}}</span><br/>
+				<span>{{elem.name}}</span>
+			</div>
+		</div>
+  </body>
+</html>
