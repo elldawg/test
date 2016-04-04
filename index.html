@@ -7,40 +7,75 @@
 			.controller('TestController', function($scope){
 				$scope.data = [{name: 'joe'},{name: 'bob'}, {name: 'mike'}, {name: 'jan'}, {name: 'josh'}];
 				var data = $scope.data;
-				doSort();
-				
-				$scope.doClick = function doClick(item){
-					removeItem(item);
-				}
+				//doSort();
 				
 				$scope.addItem = function createNew(){
-					data.push({name: $scope.newName});
-					doSort();
-					$scope.newName = "";
+					data.push({name: $scope.newName || ""});
 				}
-				
-				function removeItem(item) {
-					var index = data.indexOf(item);
-					data.splice(index, 1);
-					console.log('Count: '+$scope.data.length);
-				}
-				
-				function doSort() {
-					$scope.data.sort(function (a, b) {
-						return a.name.localeCompare(b.name);
-					});
-				}
+
 			})
 			.directive('myList', function(){
 				
 				return {
 					link: function (scope, elem) {
-						scope.elem = elem;
+						scope.elem = elem[0];
 					},
 					controller: function ($scope) {
-						console.log($scope.data);
+						var data = $scope.listData;
+						var elem = null;
+						var watches = [];
+						
+						$scope.doClick = function doClick(item){
+							removeItem(item);
+						}
+						
+						function removeItem(item) {
+							var index = data.indexOf(item);
+							data.splice(index, 1);
+						}
+						
+						var deregWatchForElem = $scope.$watch(
+							function(){return $scope.elem},
+							function(newVal, oldVal, scope){
+								elem = newVal;
+								if(newVal){
+									deregWatchForElem();
+								}
+							}
+						);
+						
+						$scope.$watch(
+							function(){return data.length},
+							function(newVal, oldVal, scope){
+							
+								if(newVal > oldVal){
+									doSort();
+								}
+							}
+						);
+						
+						//detect when the contents do not fit, and remove the last item in the list
+						$scope.$watch(
+							function(){return elem.scrollHeight},
+							function(newVal, oldVal, scope){
+								
+								if(elem && newVal > elem.clientHeight){
+									data.pop();
+								}
+							}
+						);
+						
+						function doSort() {
+							data.sort(function (a, b) {
+								return a.name.localeCompare(b.name);
+							});
+						}
 					},
-					templateUrl: 'list-template.html'
+					templateUrl: 'list-template.html',
+					restrict: 'A',
+					scope: {
+						listData: '=data'
+					}
 				}
 			});
 	</script>
@@ -48,7 +83,6 @@
 		.square2 {
 		  background: #2b3f53;
 		  border-radius: 3px;
-		  width: 100px;
 		  transform-origin: 0% 50%;
 		  padding: 5px;
 		  color: white;
@@ -71,6 +105,7 @@
 		
 		#container {
 			max-height: 300px;
+			height: 300px;
 			max-width: 120px;
 			background-color: #dfdfdf;
 		}
@@ -101,6 +136,6 @@
   </head>
   <body ng-controller="TestController">
 	<input type='text' ng-model='newName'/><button ng-click="addItem()">Create</button>
-	<my-list></my-list>
+	<div my-list data='data' class="contents" id="container"></div>
   </body>
 </html>
