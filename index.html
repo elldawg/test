@@ -13,7 +13,7 @@
 					removeItem(item);
 				}
 				
-				$scope.createNew = function createNew(){
+				$scope.addItem = function createNew(){
 					data.push({name: $scope.newName});
 					doSort();
 					$scope.newName = "";
@@ -31,6 +31,18 @@
 					});
 				}
 			})
+			.directive('myList', function(){
+				
+				return {
+					link: function (scope, elem) {
+						scope.elem = elem;
+					},
+					controller: function ($scope) {
+						console.log($scope.data);
+					},
+					templateUrl: 'list-template.html'
+				}
+			});
 	</script>
 	<style>
 		.square2 {
@@ -55,6 +67,12 @@
 		
 		.contents {
 			overflow:hidden;
+		}
+		
+		#container {
+			max-height: 300px;
+			max-width: 120px;
+			background-color: #dfdfdf;
 		}
 		
 		@keyframes goAway {
@@ -82,12 +100,7 @@
     <title></title>
   </head>
   <body ng-controller="TestController">
-	<input type='text' ng-model='newName'/><button ng-click="createNew()">Create</button>
-		<div class="square2 fade contents" ng-repeat='elem in data' ng-click='doClick(elem)' maxq-anim-track>
-			<div>
-				<span>{{elem.name}}</span><br/>
-				<span>{{elem.name}}</span>
-			</div>
-		</div>
+	<input type='text' ng-model='newName'/><button ng-click="addItem()">Create</button>
+	<my-list></my-list>
   </body>
 </html>
