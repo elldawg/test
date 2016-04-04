@@ -7,12 +7,20 @@
 			.controller('TestController', function($scope){
 				$scope.data = [{name: 'joe'},{name: 'bob'}, {name: 'mike'}, {name: 'jan'}, {name: 'josh'}];
 				var data = $scope.data;
-				//doSort();
 				
 				$scope.addItem = function createNew(){
 					data.push({name: $scope.newName || ""});
 				}
-
+                					
+                function removeItem(item) {
+                    var index = data.indexOf(item);
+                    data.splice(index, 1);
+                }
+                
+                $scope.onClick = function onClick(item){
+                    console.log(['removing an item',item]);
+                    removeItem(item);
+                }
 			})
 			.directive('myList', function(){
 				
@@ -26,12 +34,7 @@
 						var watches = [];
 						
 						$scope.doClick = function doClick(item){
-							removeItem(item);
-						}
-						
-						function removeItem(item) {
-							var index = data.indexOf(item);
-							data.splice(index, 1);
+                            $scope.myClick({item: item});
 						}
 						
 						var deregWatchForElem = $scope.$watch(
@@ -74,7 +77,8 @@
 					templateUrl: 'list-template.html',
 					restrict: 'A',
 					scope: {
-						listData: '=data'
+						listData: '=data',
+                        myClick: '&myClick'
 					}
 				}
 			});
@@ -136,6 +140,6 @@
   </head>
   <body ng-controller="TestController">
 	<input type='text' ng-model='newName'/><button ng-click="addItem()">Create</button>
-	<div my-list data='data' class="contents" id="container"></div>
+	<div my-list data='data' class="contents" id="container" my-click="onClick(item)"></div>
   </body>
 </html>
