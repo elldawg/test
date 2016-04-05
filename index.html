@@ -4,12 +4,45 @@
     <script src="./bower_components/angular-animate/angular-animate.js"></script>
 	<script>
 		angular.module('app', ['ngAnimate'])
-			.controller('TestController', function($scope){
-				$scope.data = [{name: 'joe'},{name: 'bob'}, {name: 'mike'}, {name: 'jan'}, {name: 'josh'}];
+			.controller('TestController', function($scope, $filter){
+            
+                function displayTime(time){
+                    return $filter('date')(time, 'HH:mm');
+                }
+                
+				$scope.data = [];
 				var data = $scope.data;
+                doSort();
+                
+                var DEFAULT_ROOM_NUMBER_LOW = 1500;
+                var DEFAULT_ROOM_NUMBER_HI = 1505;
+                var trackRoomNumber = DEFAULT_ROOM_NUMBER_LOW;
+				
+                var PRIORITY_INFO = 0;
+                var PRIORITY_WARNING = 1;
+                var PRIORITY_CRITICAL = 2;
+                var trackPriority = PRIORITY_INFO;
 				
 				$scope.addItem = function createNew(){
-					data.push({name: $scope.newName || ""});
+                
+                    var date = new Date();
+                    var newItem = {
+                        startTime: date,
+                        displayStartTime: displayTime(date),
+                        roomNumber: trackRoomNumber++,
+                        priority: trackPriority++;
+                    };
+                    
+                    if(trackRoomNumber > DEFAULT_ROOM_NUMBER_HI){
+                        trackRoomNumber = DEFAULT_ROOM_NUMBER_LOW;
+                    }
+                    
+                    if(trackPriority > PRIORITY_CRITICAL){
+                        trackRoomNumber = PRIORITY_INFO;
+                    }
+                    
+					data.push(newItem);
+                    doSort();
 				}
                 					
                 function removeItem(item) {
@@ -18,8 +51,17 @@
                 }
                 
                 $scope.onClick = function onClick(item){
-                    console.log(['removing an item',item]);
                     removeItem(item);
+                }
+                
+                $scope.onListFull = function onListFull(){
+                    data.pop();
+                }
+                			
+                function doSort() {
+                    data.sort(function (a, b) {
+                        return a.startTime.getTime() - b.startTime.getTime();
+                    });
                 }
 			})
 			.directive('myList', function(){
@@ -46,39 +88,28 @@
 								}
 							}
 						);
-						
-						$scope.$watch(
-							function(){return data.length},
-							function(newVal, oldVal, scope){
-							
-								if(newVal > oldVal){
-									doSort();
-								}
-							}
-						);
-						
+
 						//detect when the contents do not fit, and remove the last item in the list
 						$scope.$watch(
 							function(){return elem.scrollHeight},
 							function(newVal, oldVal, scope){
 								
 								if(elem && newVal > elem.clientHeight){
-									data.pop();
+                                    console.log('calling list full');
+									$scope.onListFull();
 								}
 							}
 						);
-						
-						function doSort() {
-							data.sort(function (a, b) {
-								return a.name.localeCompare(b.name);
-							});
-						}
 					},
-					templateUrl: 'list-template.html',
+					templateUrl: function(elem, attr){
+                        return attr.template;
+                    },
 					restrict: 'A',
 					scope: {
 						listData: '=data',
-                        myClick: '&myClick'
+                        template: '=template',
+                        myClick: '&onItemClick',
+                        onListFull: '&onListFull'
 					}
 				}
 			});
@@ -110,7 +141,7 @@
 		#container {
 			max-height: 300px;
 			height: 300px;
-			max-width: 120px;
+			max-width: 300px;
 			background-color: #dfdfdf;
 		}
 		
@@ -133,13 +164,22 @@
 				opacity: 1;
 			}
 		}
+        
+        .listItemRight {
+            float: right;
+            display: inline-block;
+        }
+        
+        .listItemLeft {
+            float: left;
+        }
 		
-
 	</style>
     <title></title>
   </head>
   <body ng-controller="TestController">
 	<input type='text' ng-model='newName'/><button ng-click="addItem()">Create</button>
-	<div my-list data='data' class="contents" id="container" my-click="onClick(item)"></div>
+	<div my-list data='data' class="contents" id="container" 
+        on-item-click="onClick(item)" on-list-full="onListFull()" template="list-template.html"></div>
   </body>
 </html>

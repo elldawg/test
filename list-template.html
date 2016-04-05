@@ -1,3 +1,3 @@
-<div class="square2 fade contents" ng-repeat='elem in listData' ng-click='doClick(elem)' maxq-anim-track>
-	<span>{{elem.name}}</span><br/>
+<div class="square2 fade contents" ng-repeat='elem in listData' ng-click='doClick(elem)' id="{{::elem.id}}">
+	<div class='listItemLeft'>{{::elem.displayStartTime}}</div><div class="listItemLeft">▲</div><div class='listItemRight'>{{::elem.roomNumber}}</div><br/>
 </div>
