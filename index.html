@@ -21,16 +21,22 @@
                 var PRIORITY_INFO = 0;
                 var PRIORITY_WARNING = 1;
                 var PRIORITY_CRITICAL = 2;
+                var PRIORITY_COLOR = [];
+                PRIORITY_COLOR[PRIORITY_INFO] = '#00FFFF';
+                PRIORITY_COLOR[PRIORITY_WARNING] = 'yellow';
+                PRIORITY_COLOR[PRIORITY_CRITICAL] = 'red';
                 var trackPriority = PRIORITY_INFO;
 				
 				$scope.addItem = function createNew(){
                 
                     var date = new Date();
+                    var priority = trackPriority++;
                     var newItem = {
                         startTime: date,
                         displayStartTime: displayTime(date),
                         roomNumber: trackRoomNumber++,
-                        priority: trackPriority++,
+                        priority: priority,
+                        priorityColor: PRIORITY_COLOR[priority],
 						alarmText: "Some Alarm text"
                     };
                     
@@ -51,13 +57,17 @@
                     data.splice(index, 1);
                 }
                 
+                $scope.priorityColor = function getPriorityColor(item){
+                    return PRIORITY_COLOR[item.priority] || 'red';
+                };
+                
                 $scope.onClick = function onClick(item){
                     removeItem(item);
-                }
+                };
                 
                 $scope.onListFull = function onListFull(){
                     data.pop();
-                }
+                };
                 			
                 function doSort() {
                     data.sort(function (a, b) {
@@ -102,6 +112,8 @@
 								}
 							}
 						);
+                        
+                        $scope.blue = true;
 					},
 					templateUrl: function(elem, attr){
                         return attr.template;
