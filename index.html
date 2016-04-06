@@ -30,7 +30,8 @@
                         startTime: date,
                         displayStartTime: displayTime(date),
                         roomNumber: trackRoomNumber++,
-                        priority: trackPriority++
+                        priority: trackPriority++,
+						alarmText: "Some Alarm text"
                     };
                     
                     if(trackRoomNumber > DEFAULT_ROOM_NUMBER_HI){
@@ -38,7 +39,7 @@
                     }
                     
                     if(trackPriority > PRIORITY_CRITICAL){
-                        trackRoomNumber = PRIORITY_INFO;
+                        trackPriority = PRIORITY_INFO;
                     }
                     
 					data.push(newItem);
@@ -60,7 +61,8 @@
                 			
                 function doSort() {
                     data.sort(function (a, b) {
-                        return a.startTime.getTime() - b.startTime.getTime();
+						//sort descending
+                        return b.startTime.getTime() - a.startTime.getTime();
                     });
                 }
 			})
@@ -173,6 +175,10 @@
         .listItemLeft {
             float: left;
         }
+		
+		.listAlarmText {
+			text-align: center;
+		}
 		
 	</style>
     <title></title>
