@@ -30,6 +30,13 @@
 				$scope.addItem = function createNew(){
                 
                     var date = new Date();
+					
+					if($scope.time){
+						var time = new Date($scope.time);
+						time.setFullYear(date.getFullYear(), date.getMonth(), date.getDate());
+						date = time;
+					}
+					
                     var priority = trackPriority++;
                     var newItem = {
                         startTime: date,
@@ -156,7 +163,7 @@
 			max-height: 300px;
 			height: 300px;
 			max-width: 300px;
-			background-color: #dfdfdf;
+			background-color: #000;
 		}
 		
 		@keyframes goAway {
@@ -196,7 +203,9 @@
     <title></title>
   </head>
   <body ng-controller="TestController">
-	<input type='text' ng-model='newName'/><button ng-click="addItem()">Create</button>
+	Alarm Message: <input type='text' ng-model='newName'/><br/>
+	Alarm Time: <input type='time' ng-model='time'/>{{time}}<br/>
+	<button ng-click="addItem()">Create</button>
 	<div my-list data='data' class="contents" id="container" 
         on-item-click="onClick(item)" on-list-full="onListFull()" template="list-template.html"></div>
   </body>
