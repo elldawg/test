@@ -6,8 +6,9 @@
 		angular.module('app', ['ngAnimate'])
 			.controller('TestController', function($scope, $filter){
             
+                var dateFilter = $filter('date');
                 function displayTime(time){
-                    return $filter('date')(time, 'HH:mm');
+                    return dateFilter(time, 'HH:mm');
                 }
                 
 				$scope.data = [];
@@ -22,7 +23,7 @@
                 var PRIORITY_WARNING = 1;
                 var PRIORITY_CRITICAL = 2;
                 var PRIORITY_COLOR = [];
-                PRIORITY_COLOR[PRIORITY_INFO] = '#00FFFF';
+                PRIORITY_COLOR[PRIORITY_INFO] = '#0000FF';
                 PRIORITY_COLOR[PRIORITY_WARNING] = 'yellow';
                 PRIORITY_COLOR[PRIORITY_CRITICAL] = 'red';
                 var trackPriority = PRIORITY_INFO;
@@ -37,7 +38,7 @@
                         roomNumber: trackRoomNumber++,
                         priority: priority,
                         priorityColor: PRIORITY_COLOR[priority],
-						alarmText: "Some Alarm text"
+						alarmText: $scope.newMessage || "Some Alarm text"
                     };
                     
                     if(trackRoomNumber > DEFAULT_ROOM_NUMBER_HI){
@@ -153,8 +154,8 @@
 		}
 		
 		#container {
-			max-height: 300px;
-			height: 300px;
+			max-height: 800px;
+			height: 800px;
 			max-width: 300px;
 			background-color: #dfdfdf;
 		}
@@ -189,14 +190,18 @@
         }
 		
 		.listAlarmText {
-			text-align: center;
+			margin-left: 20px;
 		}
+        
+        .priorityIcon {
+            margin-left: 5px;
+        }
 		
 	</style>
     <title></title>
   </head>
   <body ng-controller="TestController">
-	<input type='text' ng-model='newName'/><button ng-click="addItem()">Create</button>
+	<input type='text' ng-model='newMessage'/><button ng-click="addItem()">Create</button>
 	<div my-list data='data' class="contents" id="container" 
         on-item-click="onClick(item)" on-list-full="onListFull()" template="list-template.html"></div>
   </body>

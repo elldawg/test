@@ -1,16 +1,18 @@
 <div class="square2 fade contents" ng-repeat='elem in listData' ng-click='doClick(elem)' id="{{::elem.id}}">
     <div class='listItemLeft'>{{::elem.displayStartTime}}</div><div class="listItemLeft">
-        <svg width="20" xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-        viewBox="0 0 260 200">
+        <svg class="priorityIcon" height="1em" xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+            viewBox="0 -50 290 290">
             <g>
-                <polygon points="110,20 210,193 10,193" ng-style="{fill: elem.priorityColor, stroke: 'white', 'stroke-width': 10}"/>
-                <path d="M150,50  A100,100 0 0,1 205,145"
-                    style="stroke: white; stroke-width:10; fill:none;"/>
-                <path d="M160,30  A120,120 0 0,1 225,150"
-                    style="stroke: white; stroke-width:10; fill:none;"/>
-                <path d="M170,10  A140,140 0 0,1 245,155"
-                    style="stroke: white; stroke-width:10; fill:none;"/>
+                <polygon points="110,30 210,203 10,203" ng-style="{fill: elem.priorityColor, stroke: 'white', 'stroke-width': 10}"/>
+                <g transform="translate(10, -10)">
+                    <path d="M150,50  A100,100 0 0,1 205,145"
+                        style="stroke: white; stroke-width:20; fill:none;"/>
+                    <path d="M160,20  A120,120 0 0,1 235,150"
+                        style="stroke: white; stroke-width:20; fill:none;" ng-show="elem.priority > 0"/>
+                    <path d="M170,-10  A140,140 0 0,1 265,155"
+                        style="stroke: white; stroke-width:20; fill:none;" ng-show="elem.priority > 1"/>
+                <g/>
             </g>
         </svg>
     </div><div class='listItemRight'>{{::elem.roomNumber}}</div>
